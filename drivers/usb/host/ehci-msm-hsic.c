@@ -103,9 +103,9 @@ struct msm_hsic_hcd {
 
 struct msm_hsic_hcd *__mehci;
 
-static bool debug_bus_voting_enabled = false;
+static bool debug_bus_voting_enabled = true;
 
-static unsigned int enable_payload_log = 0;
+static unsigned int enable_payload_log = 1;
 module_param(enable_payload_log, uint, S_IRUGO | S_IWUSR);
 static unsigned int enable_dbg_log = 1;
 module_param(enable_dbg_log, uint, S_IRUGO | S_IWUSR);
@@ -648,7 +648,7 @@ static int msm_hsic_start(struct msm_hsic_hcd *mehci)
 	return 0;
 }
 
-#define PHY_SUSPEND_TIMEOUT_USEC	(200 * 1000)
+#define PHY_SUSPEND_TIMEOUT_USEC	(500 * 1000)
 #define PHY_RESUME_TIMEOUT_USEC		(100 * 1000)
 
 #ifdef CONFIG_PM_SLEEP
