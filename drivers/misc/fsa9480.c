@@ -96,6 +96,8 @@
 #define INT_DETACH		(1 << 1)
 #define INT_ATTACH		(1 << 0)
 
+extern int force_fast_charge;
+
 struct fsa9480_usbsw {
 	struct i2c_client		*client;
 	struct fsa9480_platform_data	*pdata;
@@ -283,8 +285,13 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw, int intr)
 	if (intr & INT_ATTACH) {	/* Attached */
 		/* USB */
 		if (val1 & DEV_T1_USB_MASK || val2 & DEV_T2_USB_MASK) {
-			if (pdata->usb_cb)
+			if (pdata->usb_cb) {
+			  if (pdata->charger_cb && force_fast_charge != 0) {
+				pdata->charger_cb(FSA9480_ATTACHED);
+			  } else {
 				pdata->usb_cb(FSA9480_ATTACHED);
+			  }
+			}
 
 			if (usbsw->mansw) {
 				fsa9480_write_reg(client,
@@ -318,8 +325,13 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw, int intr)
 		/* USB */
 		if (usbsw->dev1 & DEV_T1_USB_MASK ||
 			usbsw->dev2 & DEV_T2_USB_MASK) {
-			if (pdata->usb_cb)
+			if (pdata->usb_cb) {
+			  if (pdata->charger_cb && force_fast_charge != 0) {
+				pdata->charger_cb(FSA9480_DETATCHED);
+			  } else {
 				pdata->usb_cb(FSA9480_DETACHED);
+			  }
+			}
 		}
 
 		/* UART */
